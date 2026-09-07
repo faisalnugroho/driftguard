@@ -1,0 +1,134 @@
+{
+  "smoke_plan": {
+    "s1_watch_baseline": "Tavily Search API: create_watch + create_baseline on raw .md source",
+    "s2_determinism": "3 consecutive check_watch consensus runs \u2014 stable NO_CHANGE/MINOR family",
+    "s3_negative": "example.com must not yield NO_CHANGE baseline; dead URL -> SOURCE_UNAVAILABLE",
+    "s4_views": "get_watch/get_history/get_stats readback",
+    "tool_version": "deploy_smoke v2 (guard-aware, cooldown-aware, id-normalized)"
+  },
+  "deploy": {
+    "reused_address": "0xAc908C41B2326CE515a746292908BAc35f7AB6B6",
+    "note": "no redeploy; smoke only"
+  },
+  "contract_info": {
+    "name": "DRIFTGUARD",
+    "tagline": "Trustless semantic change detection for the open web.",
+    "protocol_version": "1.0",
+    "owner": "0xdFD378d1b0d3a65d1fbc43e1426A580baA64A3Eb",
+    "classifications": [
+      "NO_CHANGE",
+      "MINOR_CHANGE",
+      "MATERIAL_CHANGE",
+      "SOURCE_UNAVAILABLE",
+      "UNCERTAIN"
+    ],
+    "equivalence_matrix": {
+      "NO_CHANGE": [
+        "NO_CHANGE",
+        "MINOR_CHANGE"
+      ],
+      "MINOR_CHANGE": [
+        "NO_CHANGE",
+        "MINOR_CHANGE"
+      ],
+      "MATERIAL_CHANGE": [
+        "MATERIAL_CHANGE"
+      ],
+      "SOURCE_UNAVAILABLE": [
+        "SOURCE_UNAVAILABLE"
+      ],
+      "UNCERTAIN": [
+        "UNCERTAIN"
+      ]
+    },
+    "policy": {
+      "check_cooldown_seconds": 180,
+      "baseline_topic_match_pct": 60,
+      "comparative_cap": 6,
+      "max_content_chars": 12000,
+      "min_text_chars": 40
+    },
+    "stats": {
+      "total_watches": 5,
+      "active_watches": 5,
+      "total_checks": 6,
+      "material_changes": 0,
+      "uncertain_checks": 0,
+      "unavailable_checks": 0
+    }
+  },
+  "s1_watch_baseline": {
+    "watch_id": 6,
+    "name": "Tavily Search API",
+    "url": "https://docs.tavily.com/documentation/api-reference/endpoint/search.md",
+    "baseline_fingerprint": "05b8f32e18bbc178",
+    "baseline_summary": "Docs describe POST /search on https://api.tavily.com with no documented auth or rate limits. Breaking constraints include 400 errors for invalid parameter dependencies and unsupported safe_search on f",
+    "secs": 159.8
+  },
+  "s2_check_1": {
+    "classification": "NO_CHANGE",
+    "votes": [
+      "MAJORITY_AGREE"
+    ],
+    "check_id": "11",
+    "explanation": "No meaningful semantic changes detected. Content structure and monitored aspects remain consistent with the baseline."
+  },
+  "s2_check_2": {
+    "classification": "NO_CHANGE",
+    "votes": [
+      "MAJORITY_AGREE"
+    ],
+    "check_id": "12",
+    "explanation": "The monitored criteria for authentication, rate limits, endpoints, and breaking changes show identical substance to the baseline."
+  },
+  "s2_check_3": {
+    "classification": "NO_CHANGE",
+    "votes": [
+      "MAJORITY_AGREE"
+    ],
+    "check_id": "13",
+    "explanation": "Criteria-relevant substance matches the baseline: same endpoint, no documented auth or rate limits, same parameter constraints, and same documented limits."
+  },
+  "s2_determinism": {
+    "verdicts": [
+      "NO_CHANGE",
+      "NO_CHANGE",
+      "NO_CHANGE"
+    ],
+    "no_or_minor_family": true
+  },
+  "s3_negative": {
+    "example_com": {
+      "id": 7,
+      "baseline_stored": true,
+      "baseline_summary": "Page is a placeholder domain used for documentation examples. No pricing, fees, eligibility requirements, or deadlines are present in the content."
+    },
+    "dead_url": {
+      "id": 8,
+      "baseline_stored": false,
+      "latest_status": "",
+      "guard_payload": "'readable': '\"\\\\\"watch_id\\\\\": \\\\\"8\\\\\", \\\\\"baseline_created\\\\\": false, \\\\\"source_"
+    },
+    "never_no_change": true,
+    "secs": 249.7
+  },
+  "s4_views": {
+    "watch": {
+      "id": "6",
+      "url": "https://docs.tavily.com/documentation/api-reference/endpoint/search.md",
+      "latest": "NO_CHANGE",
+      "total_checks": 3,
+      "checks_performed": null
+    },
+    "history_count": 4,
+    "stats": {
+      "total_watches": 8,
+      "active_watches": 8,
+      "total_checks": 9,
+      "material_changes": 0,
+      "uncertain_checks": 0,
+      "unavailable_checks": 0
+    }
+  },
+  "done": true
+}

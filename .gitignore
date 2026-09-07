@@ -1,0 +1,17 @@
+# secrets
+scripts/smoke_deployer.json
+*.key
+*.env
+.env
+frontend/contract-address.local.js
+
+# build / deps
+frontend/node_modules/
+frontend/dist/
+**/__pycache__/
+*.pyc
+.pytest_cache/
+
+# artifacts
+artifacts/
+frontend/public/genlayer-sdk.bundle.js
