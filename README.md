@@ -113,17 +113,24 @@ UNCERTAIN          ↔ UNCERTAIN                  (strict)
 
 ## Testing
 
-87 direct-mode tests (`gltest` pinned 0.29.2) cover watch creation,
-invalid URL / empty criteria rejection, owner permissions, baseline
-creation, all five classifications, injection attempts, equivalence-matrix
-rejections, baseline promotion, pause/resume, and view methods.
+99 tests (`gltest` pinned 0.29.2): 87 direct-mode contract tests covering
+watch creation, invalid URL / empty criteria rejection, owner permissions,
+baseline creation, all five classifications, injection attempts,
+equivalence-matrix rejections, baseline promotion, pause/resume, and view
+methods — plus 12 deploy-script regression tests.
 
 ```bash
 cd ~/driftguard && ~/genlayer-env/bin/python -m pytest tests/direct -q
 ```
 
-Live Studionet smoke: `scripts/deploy_smoke.py` (deploy + determinism ×3 +
-negative cases + views readback) — results in `docs/deployment_log.json`.
+Live Studionet evidence:
+- `scripts/deploy_smoke.py` — deploy + determinism ×3 + negative cases +
+  views readback → `docs/deployment_log.json`
+- `scripts/classification_proof.py` — controlled-fixture classification
+  proofs (material change, revert, dead URL, empty page, prompt injection)
+  → `docs/classification_proof.json`
+- Full lifecycle E2E driven from the hosted dApp (watch #16) →
+  `SUBMISSION.md`
 
 ## Frontend dApp
 
@@ -156,10 +163,25 @@ frontend/                   React/TS dApp (LIVE + DEMO modes)
 docs/deployment_log.json    live smoke evidence (tx hashes, verdicts)
 ```
 
+## Live deployment
+
+| Item | Value |
+|---|---|
+| Contract | `0xAc908C41B2326CE515a746292908BAc35f7AB6B6` (GenLayer Studionet) — [explorer](https://explorer-studio.genlayer.com/address/0xAc908C41B2326CE515a746292908BAc35f7AB6B6) |
+| dApp | https://driftguard-kappa.vercel.app (LIVE mode — reads/writes the Studionet contract directly) |
+| Tests | 99 passed / 0 failed (87 direct-mode + 12 regression) |
+
+On-chain evidence for watch #16 (read back via RPC, see `SUBMISSION.md`):
+`BASELINE_CREATED → NO_CHANGE → MATERIAL_CHANGE → SOURCE_UNAVAILABLE →
+BASELINE_PROMOTED`, baseline fingerprint moved only by the explicit owner
+promotion (`7550639f…` → `eb32fb09…`).
+
 ## Honest status
 
-- Contract: tested (87/87) and deployed on GenLayer Studionet — see
-  `docs/deployment_log.json` and the frontend's contract info panel for
-  the live address and live consensus evidence.
-- The UI shows "Contract not deployed yet" rather than fabricating an
-  address; demo results are always badged as simulation.
+- The contract is deployed and live; every claim above was read back from
+  the chain, and the dApp renders real consensus state (not simulations).
+- DEMO mode is clearly badged and never contacts GenLayer; the UI shows
+  "Awaiting live verification" rather than fabricating results.
+- `SUBMISSION.md` is the full evidence trail (tx hashes per scenario);
+  `docs/PORTAL_SUBMISSION_KIT.md` mirrors the GenLayer Builder Portal
+  submission fields.
