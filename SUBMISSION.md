@@ -22,7 +22,7 @@ can tell a policy change from a rewording.
 | Network | GenLayer Studionet (explorer-studio.genlayer.com) |
 | Deploy tx | `0xb0afd1002db6554bf1371596a4baf1c98553928a58d056d9f63386eb0d6e30fd` (Deploy, FINALIZED, SUCCESS, Accepted) |
 | Repository | https://github.com/faisalnugroho/driftguard |
-| Frontend | React+TS+Vite dApp (`frontend/`); runs locally via `npx vite preview` — not yet hosted on a public URL |
+| Frontend | https://driftguard-kappa.vercel.app (public dApp, LIVE mode, reads/writes the Studionet contract directly) |
 | Test suite | 99 passed / 0 failed / 0 skipped (87 contract direct-mode + 12 deploy-script regression) |
 | Contract test framework | gltest direct mode 0.29.2, py-genlayer runner pinned by hash |
 
@@ -79,6 +79,33 @@ deployed frontend (all writes are real transactions, all reads on-chain):
 6. New browser session (full refresh) → dashboard re-reads chain; all
    watches, stats, classifications and history persist (they live on-chain).
 
+## Full lifecycle E2E from the public deployed URL (watch #16)
+
+Every step below was driven from the **hosted** dApp
+(https://driftguard-kappa.vercel.app) in LIVE mode by a real browser;
+every write is a real Studionet transaction, and the final state was read
+back directly from the contract via RPC (`get_watch`/`get_history`, watch
+#16 "Kappa Live Write E2E", owner `0x28A57…d07A`, source = controlled
+fixture tunnel):
+
+1. **Create Watch from the public URL** → tx finalized, watch #16
+   registered (Sep 7, 2026).
+2. **Create Baseline from the public URL** → consensus accepted baseline
+   `fp=7550639f9624cf73`; the UI renders the sealed semantic state
+   (refund window 14 days, $5 restocking fee, eligibility, deadlines…).
+3. **Check Now #1 (source untouched)** → `NO_CHANGE` — no false material.
+4. **Fixture flipped 14→30 days, Check Now #2** → `MATERIAL_CHANGE`,
+   explanation: "refund window changed from 14 days to 30 days".
+5. **Fixture stopped (tunnel 502), Check Now #3** → `SOURCE_UNAVAILABLE`
+   — the deterministic retrieval gate; failure never masquerades as calm.
+6. **Promote Current State** → `BASELINE_PROMOTED`; baseline fingerprint
+   moved `7550639f…` → `eb32fb099ec4c559` only by this explicit owner
+   action (P9 immutability holds across the whole run).
+
+Final on-chain history for watch #16 (RPC read-back): 5 records —
+BASELINE_CREATED → NO_CHANGE → MATERIAL_CHANGE → SOURCE_UNAVAILABLE →
+BASELINE_PROMOTED; `total_checks=3`, `material_changes=1`.
+
 ## Fixes made during finalization (found by the E2E, all verified)
 
 1. **Busy-overlay freeze:** `busy` was never cleared after a consensus
@@ -96,9 +123,10 @@ deployed frontend (all writes are real transactions, all reads on-chain):
 
 ## Honest limitations
 
-- The frontend is a production build but is not deployed to a public URL
-  (self-hosted GitHub Pages deployment was out of scope for this
-  finalization pass; the build runs locally and is fully functional).
+- The deployed dApp is a client-side-only build: contract state lives
+  entirely on GenLayer Studionet; there is no backend server of ours in
+  the write path (the only infrastructure is the demo fixture tunnel used
+  for controlled-source proofs).
 - Studionet consensus latency varies from ~1 to ~13 minutes per
   nondeterministic transaction under validator churn; the UI budgets for
   it and reports progress honestly.
